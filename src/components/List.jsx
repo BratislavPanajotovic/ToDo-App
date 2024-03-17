@@ -1,7 +1,7 @@
-import { useState } from "react";
-
+import { useReducer } from "react";
+import reducer from "../reducer/Reducer";
 const List = () => {
-  const [task, setTask] = useState([]);
+  const [tasks, dispatch] = useReducer(reducer, []);
 
   const addTask = (taskText) => {
     const newTask = {
@@ -9,25 +9,19 @@ const List = () => {
       text: taskText,
       completed: false,
     };
-    setTask([...task, newTask]);
+    dispatch({ type: "ADD_TASK", payload: newTask });
   };
 
   const deleteTask = (taskId) => {
-    const newTasks = task.filter((item) => item.id !== taskId);
-    setTask(newTasks);
+    dispatch({ type: "DELETE_TASK", payload: taskId });
   };
 
   const toggleTaskCompletion = (taskId) => {
-    setTask((prevTask) => {
-      return prevTask.map((item) =>
-        item.id === taskId ? { ...item, completed: !item.completed } : item
-      );
-    });
+    dispatch({ type: "TOGGLE_TASK_COMPLETION", payload: taskId });
   };
 
   return (
     <div>
-      {" "}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -38,9 +32,9 @@ const List = () => {
       >
         <input type="text" name="task" placeholder="Enter a new task" />
         <button type="submit">Add Task</button>
-      </form>{" "}
+      </form>
       <ul>
-        {task.map((item) => (
+        {tasks.map((item) => (
           <li key={item.id}>
             <input
               type="checkbox"
